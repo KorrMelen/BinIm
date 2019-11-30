@@ -1,45 +1,35 @@
 public class Flot {
-	private Pixel pixel;
-	private int penalite;
+	private int capacite;
 	private int flot;
-	private Flot suiv;
+	private int antiflot;
 	
-	public Flot(Pixel pixel, int penalite) {
-		this.pixel = pixel;
-		this.penalite = penalite;
+	public Flot(int capacite) {
+		this.capacite = capacite;
 		this.flot = 0;
-		this.suiv = null;
+		this.antiflot = 0;
 	}
 
-	public Pixel getPixel() {
-		return pixel;
-	}
-
-	public int getPenalite() {
-		return penalite;
+	public int getCapacite() {
+		return capacite;
 	}
 
 	public int getFlot() {
 		return flot;
 	}
 
-	public Flot getSuiv() {
-		return suiv;
+	public int getAntiflot() {
+		return antiflot;
 	}
 
-	public void setPenalite(int penalite) {
-		this.penalite = penalite;
+	public void setCapacite(int capacite) {
+		this.capacite = capacite;
 	}
 
 	public void setFlot(int flot) {
 		this.flot = flot;
 	}
 
-	public void addSuiv(Flot suiv) {
-		if(this.suiv == null) {
-			this.suiv = suiv;
-		}else {
-			this.suiv.addSuiv(suiv);
-		}
+	public void setAntiflot(int antiflot) {
+		this.antiflot = antiflot;
 	}
 }
