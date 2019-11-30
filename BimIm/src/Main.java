@@ -43,22 +43,38 @@ public class Main {
 		return graph;
 	}
 	
-	private boolean avancer (Graph g, int i, int j) {
-		if(g.getPixels()[i].getE() > 0) {
-			if(g.getFlots()[i][j].getCapacite() > 0) {
-				if (g.getPixels()[i].getH() == g.getPixels()[j].getH() + 1) {
-					int d = Math.min(g.getPixels()[i].getE(), g.getFlots()[i][j].getCapacite());
-					g.setFlots(i, j, d);
-					g.setPixels(i, d);
-					g.setPixels(j, d);
-					return true;
+	private boolean avancer (Graph g) {
+		int i = 1;
+		int j = 0;
+		while(i < g.getFlots().length-1) {
+			while(j < g.getFlots().length) {
+				if(g.getFlots()[i][j] != null) {
+					if(g.getPixels()[i].getE() > 0) {
+						if(g.getFlots()[i][j].getCapacite() > 0) {
+							if (g.getPixels()[i].getH() == g.getPixels()[j].getH() + 1) {
+								int d = Math.min(g.getPixels()[i].getE(), g.getFlots()[i][j].getCapacite());
+								g.setFlots(i, j, d);
+								g.setPixels(i, d);
+								g.setPixels(j, d);
+								return true;
+							}
+						}
+					}
 				}
+				j++;
 			}
+			i++;
 		}
-		
 		return false;
 	}
 	
+	private boolean elever(Graph g) {
+		return true;
+	}
+	
+	public void preflot (Graph g) {
+		while(avancer(g) || elever(g));
+	}
 	
 	public static void main(String[] args) throws IOException {
 		Graph graph = makeGraph("src/test");
