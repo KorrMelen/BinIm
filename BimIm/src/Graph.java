@@ -1,6 +1,6 @@
 public class Graph {
 	private Pixel pixels[];
-	private Flot flots[][];
+	private Flot flots[];
 	private int n;
 	private int m;
 	private Pixel s;
@@ -10,7 +10,7 @@ public class Graph {
 		this.n = n;
 		this.m = m;
 		this.pixels = new Pixel [n*m+2];
-		this.flots = new Flot [n*m+2][n*m+2];
+		this.flots = new Flot [n*m+2];
 		this.s = new Pixel(-1,-1);
 		this.s.setH(n*m+2);
 		this.t = new Pixel(-1,-1);
@@ -30,12 +30,8 @@ public class Graph {
 		return pixels;
 	}
 
-	public Flot[][] getFlots() {
+	public Flot[] getFlots() {
 		return this.flots;
-	}
-	
-	public void setFlots (int i, int j, int val) {
-		this.flots[i][j].setFlot(this.flots[i][j].getFlot() + val);
 	}
 	
 	public void setPixels (int i, int val) {
@@ -49,19 +45,25 @@ public class Graph {
 	public void addProba (int numbPixel, int proba, boolean a) {
 		if(a) {
 			this.pixels[numbPixel].setA(proba);
-			this.flots[0][numbPixel] = new Flot(proba);
-			this.flots[0][numbPixel].setFlot(proba);
-			this.flots[0][numbPixel].setAntiflot(-proba);
+			Flot f = new Flot(proba, this.pixels[numbPixel]);
+			f.setFlot(proba);
+			f.setAntiflot(-proba);
+			f.setNext(this.flots[0]);
+			this.flots[0] = f;
 			this.s.setE(this.s.getE()-proba);
 		}else{
 			this.pixels[numbPixel].setB(proba);
-			this.flots[numbPixel][this.flots.length-1] = new Flot(proba);
+			this.flots[numbPixel] = new Flot(proba, this.t);
 		}
 	}
 	
 	public void addPena(int pena, int numbPixel1, int numbPixel2){
-		this.flots[numbPixel1][numbPixel2] = new Flot(pena);
-		this.flots[numbPixel2][numbPixel1] = new Flot(pena);
+		Flot f1 = new Flot(pena, this.pixels[numbPixel2]);
+		f1.setNext(this.flots[numbPixel1]);
+		this.flots[numbPixel1] = f1;
+		Flot f2 = new Flot(pena, this.pixels[numbPixel1]);
+		f2.setNext(this.flots[numbPixel2]);
+		this.flots[numbPixel2] = f2;
 	}
 	
 //	public void addPena(int pena, int coori1, int coorj1, int coori2, int coorj2) {
