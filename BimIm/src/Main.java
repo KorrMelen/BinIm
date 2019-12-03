@@ -5,7 +5,7 @@ import java.lang.Math;
 
 public class Main {
 	
-	public static Graph makeGraph (String file) throws java.io.IOException {
+	public static Graph ConstructionReseau (String file) throws java.io.IOException {
 		java.util.Scanner lecteur ;
 		java.io.File fichier = new File(file);
 		lecteur = new Scanner(fichier);
@@ -15,7 +15,7 @@ public class Main {
 		Graph graph = new Graph(n,m);
 		for(int i = 0; i < n; i++) {
 			for(int j = 0; j < m; j++) {
-				Pixel p = new Pixel(i,j);
+				Pixel p = new Pixel(i,j,i*n+j+1);
 				graph.addPixel(p,i*n+j+1);
 				graph.addProba(i*n+j+1, lecteur.nextInt(), true);
 			}
@@ -43,91 +43,80 @@ public class Main {
 		return graph;
 	}
 	
-	private static boolean avancer (Graph g, int i) {
-		while(i < g.getFlots().length-1) {
-			Flot j = g.getFlots()[i];
-			while(j != null) {
-				Pixel p1 = g.getPixels()[i];
-				if(p1.getE() > 0) {
-					if(j.getCapacite() > 0) {
-						Pixel p2 = j.getVoisin();
-						if (p1.getH() == p2.getH() + 1) {
-							int d = Math.min(p1.getE(), j.getCapacite());
-							j.setFlot(j.getFlot()+d);
-							p1.setE(p1.getE() - d);
-							p2.setE(p2.getE()+d);
-							return true;
+	
+	private static Path chemin(Graph g, Path path) {
+		Flot p = g.getFlots()[0];
+		for(Flot p2:path.getPath()){
+			p = p2;
+		}
+		p = g.getFlots()[p.getVoisin().getNumbPixel()];
+		while(p != null) {
+			if(p.getFlot() < p.getCapacite()) {
+				if (p.getVoisin().getNumbPixel() == -1) {
+					path.addPath(p);
+					path.setFlotMin(Math.min(path.getFlotMin(),p.getCapacite()-p.getFlot()));
+					return path;
+				}
+				if(path.addPath(p)){
+					int flot = Math.min(path.getFlotMin(),p.getCapacite()-p.getFlot());
+					Path path2 = chemin(g, path);
+					int i = 0;
+					for(int p2:path.getSommet()){
+						i = p2;
+					}
+					if (i ==-1) {
+						path.setFlotMin(Math.min(path.getFlotMin(),flot));
+						return path2;
+					}
+					path.removePath(p);
+				}
+			}
+			p = p.getNext();
+		}
+		return path;
+	}
+	
+	public static int CalculFlotMax (Graph g) {
+		int flot = 0;
+		Flot f = g.getFlots()[0];
+		while (f != null) {
+			if (f.getFlot() >= f.getCapacite()) {
+				f = f.getNext();
+			}else{
+				Path p = chemin(g, new Path(f));
+				for(int p2:p.getSommet()){
+				}
+				if(p.getPath().size() != 1) {
+					int minf = p.getFlotMin();
+					flot += minf;
+					for(Flot f2:p.getPath()){
+						f2.setFlot(minf);
+						if(f2.getVoisin().getNumbPixel() != -1) {
+							Flot f3 = g.getFlots()[f2.getVoisin().getNumbPixel()];
+							while(f3 != null) {
+								if (f3.getVoisin().getNumbPixel() == f2.getSommet().getNumbPixel()) {
+									f3.setFlot(-minf);
+								}
+								f3 = f3.getNext();
+							}
+							
 						}
 					}
-				}
-				j = j.getNext();
-			}
-			i++;
-		}
-		return false;
-	}
-	
-	private static int elever(Graph g) {
-		int i = 1;
-		while(i < g.getFlots().length-1) {
-			Pixel p1 = g.getPixels()[i];
-			if(p1.getE() > 0) {
-				Flot j = g.getFlots()[i];
-				int min = Integer.MAX_VALUE;
-				while(j!= null) {
-					Pixel p2 = j.getVoisin();
-					if (p1.getH() <= p2.getH()) {
-						min = Math.min(min, p2.getH());
-					}else{
-						min = Integer.MAX_VALUE;
-						break;
-					}
-					j = j.getNext();
-				}
-				if(min != Integer.MAX_VALUE) {
-					p1.setH(1+min);
-					return i;
-				}
-			}
-			i++;
-		}
-		return -1;
-	}
-	
-	public static void preflot (Graph g) {
-		int i;
-		boolean continu = true;
-		while(continu) {
-			i = 1;
-			while(i <= g.getM()*g.getN()){
-				if(avancer(g,i)){
-					i = 1;
 				}else{
-					i++;
+					f = f.getNext();
 				}
 			}
-			int c = elever(g);
-			System.out.println(c);
-			if (c != -1) {
-				avancer(g, c);
-			}else{
-				continu = false;
-			}
 		}
+		return flot;
 	}
+	
 	
 	public static void main(String[] arg) throws IOException {
-		System.out.println("nom du fichier dans le répertoir fichier?");
-		Scanner lectureKB = new Scanner(System.in);
-		String fichier = lectureKB.nextLine();
-		Graph graph = makeGraph("fichier/"+fichier);
-		preflot(graph);
-		for(int i = 0; i < graph.getN(); i++) {
-			for(int j = 0; j < graph.getN(); j++) {
-				System.out.print(graph.getPixels()[i*graph.getN()+j].getA()+","+graph.getPixels()[i*graph.getN()+j].getB()+" ");
-			}
-			System.out.println("");
-		}
-		System.out.println(graph.getPixels()[graph.getM()*graph.getN()+1].getE());
+//		System.out.println("nom du fichier dans le répertoir fichier?");
+//		Scanner lectureKB = new Scanner(System.in);
+//		String fichier = lectureKB.nextLine();
+//		lectureKB.close();
+		Graph graph = ConstructionReseau("fichier/test2"/*+fichier*/);
+		System.out.println(CalculFlotMax(graph));
 	}
 }

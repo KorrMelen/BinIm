@@ -1,6 +1,6 @@
 public class Graph {
 	private Pixel pixels[];
-	private Flot flots[];
+	private Flot arc[];
 	private int n;
 	private int m;
 	private Pixel s;
@@ -10,10 +10,10 @@ public class Graph {
 		this.n = n;
 		this.m = m;
 		this.pixels = new Pixel [n*m+2];
-		this.flots = new Flot [n*m+2];
-		this.s = new Pixel(-1,-1);
-		this.s.setH(n*m+2);
-		this.t = new Pixel(-1,-1);
+		this.arc = new Flot [n*m+2];
+		this.s = new Pixel(-1,-1,0);
+		//this.s.setH(n*m+2);
+		this.t = new Pixel(-1,-1,-1);
 		this.pixels[0] = this.s;
 		this.pixels[n*m+1] = this.t;
 	}
@@ -31,11 +31,7 @@ public class Graph {
 	}
 
 	public Flot[] getFlots() {
-		return this.flots;
-	}
-	
-	public void setPixels (int i, int val) {
-		this.pixels[i].setE(this.pixels[i].getE() + val);
+		return this.arc;
 	}
 
 	public void addPixel(Pixel pixel, int numbPixel) {
@@ -45,25 +41,24 @@ public class Graph {
 	public void addProba (int numbPixel, int proba, boolean a) {
 		if(a) {
 			this.pixels[numbPixel].setA(proba);
-			Flot f = new Flot(proba, this.pixels[numbPixel]);
-			f.setFlot(proba);
-			f.setAntiflot(-proba);
-			f.setNext(this.flots[0]);
-			this.flots[0] = f;
-			this.s.setE(this.s.getE()-proba);
+			Flot f = new Flot(proba, this.s,this.pixels[numbPixel]);
+			//f.setAntiflot(-proba);
+			f.setNext(this.arc[0]);
+			this.arc[0] = f;
+			//this.s.setE(this.s.getE()-proba);
 		}else{
 			this.pixels[numbPixel].setB(proba);
-			this.flots[numbPixel] = new Flot(proba, this.t);
+			this.arc[numbPixel] = new Flot(proba, this.pixels[numbPixel], this.t);
 		}
 	}
 	
 	public void addPena(int pena, int numbPixel1, int numbPixel2){
-		Flot f1 = new Flot(pena, this.pixels[numbPixel2]);
-		f1.setNext(this.flots[numbPixel1]);
-		this.flots[numbPixel1] = f1;
-		Flot f2 = new Flot(pena, this.pixels[numbPixel1]);
-		f2.setNext(this.flots[numbPixel2]);
-		this.flots[numbPixel2] = f2;
+		Flot f1 = new Flot(pena, this.pixels[numbPixel1], this.pixels[numbPixel2]);
+		f1.setNext(this.arc[numbPixel1]);
+		this.arc[numbPixel1] = f1;
+		Flot f2 = new Flot(pena, this.pixels[numbPixel2], this.pixels[numbPixel1]);
+		f2.setNext(this.arc[numbPixel2]);
+		this.arc[numbPixel2] = f2;
 	}
 	
 //	public void addPena(int pena, int coori1, int coorj1, int coori2, int coorj2) {
