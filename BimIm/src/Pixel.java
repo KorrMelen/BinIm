@@ -1,10 +1,10 @@
 public class Pixel {
 	private int coordi;
 	private int coordj;
-	private int probaA;
-	private int probaB;
-	private int numbPixel;
-	private boolean setA;
+	//private int probaA;
+	//private int probaB;
+	private int numbPixel; //numéro du pixel (compris entre 1 et line*row)
+	private boolean setA; //true si appartien à l'ensemble A, false sinon
 	
 	public Pixel(int coordi, int coordj, int numbPixel) {
 		this.coordi = coordi;
@@ -13,13 +13,13 @@ public class Pixel {
 		this.setA = false;
 	}
 	
-	public void setProbaA(int a) {
-		this.probaA = a;
-	}
-
-	public void setProbaB(int b) {
-		this.probaB = b;
-	}
+//	public void setProbaA(int a) {
+//		this.probaA = a;
+//	}
+//
+//	public void setProbaB(int b) {
+//		this.probaB = b;
+//	}
 
 	public void setSetA(boolean set) {
 		this.setA = set;
@@ -33,13 +33,13 @@ public class Pixel {
 		return this.coordj;
 	}
 
-	public int getProbaA() {
-		return this.probaA;
-	}
-
-	public int getProbaB() {
-		return this.probaB;
-	}
+//	public int getProbaA() {
+//		return this.probaA;
+//	}
+//
+//	public int getProbaB() {
+//		return this.probaB;
+//	}
 	
 	public int getNumbPixel() {
 		return this.numbPixel;

@@ -13,7 +13,8 @@ public class Main {
 		int row = lecteur.nextInt();
 		
 		Graph graph = new Graph(line,row);
-		for(int i = 0; i < line; i++) {
+		
+		for(int i = 0; i < line; i++) {// Lecture de la matrice des a(ij)
 			for(int j = 0; j < row; j++) {
 				Pixel pixel = new Pixel(i,j,i*row+j+1);
 				graph.addPixel(pixel,i*row+j+1);
@@ -21,19 +22,19 @@ public class Main {
 			}
 		}
 		
-		for(int i = 0; i < line; i++) {
+		for(int i = 0; i < line; i++) { //Lecture de la matrice des b(ij)
 			for(int j = 0; j < row; j++) {
 				graph.addProba(i*row+j+1, lecteur.nextInt(), false);
 			}
 		}
 		
-		for(int i = 0; i < line; i++) {
+		for(int i = 0; i < line; i++) { // Lecture de la matrice des pénalitées horizontales
 			for(int j = 0; j < row-1; j++) {
 				graph.addPenalite(lecteur.nextInt(),i*row+j+1,i*row+j+2);
 			}
 		}
 		
-		for(int i = 0; i < line-1; i++) {
+		for(int i = 0; i < line-1; i++) { // Lecture de la matrice des pénalitées verticales
 			for(int j = 0; j < row; j++) {
 				graph.addPenalite(lecteur.nextInt(),i*row+j+1,(i+1)*row+j+1);
 			}
@@ -45,30 +46,31 @@ public class Main {
 	
 	
 	private static Path searchPath(Graph graph, Path path) {
-		Arcs arcTest = graph.getArcs()[0];
-		for(Arcs lastArc:path.getPath()){
-			arcTest = lastArc;
+		//Arcs arcTest = graph.getArcs()[0];
+		int pixel = 0;
+		for(int lastPixel:path.getSommet()){ // on parcourt tous les sommets du chemin
+			pixel = lastPixel; // On réccupère le dernier sommet
 		}
-		arcTest = graph.getArcs()[arcTest.getSommetDestination().getNumbPixel()];
+		Arcs arcTest = graph.getArcs()[pixel]; // On regarde tous les arcs qui partent du dernier sommet
 		while(arcTest != null) {
-			if(arcTest.getFlot() < arcTest.getCapacite()) {
-				if (arcTest.getSommetDestination().getNumbPixel() == -1) {
+			if(arcTest.getFlot() < arcTest.getCapacite()) { // Si on peut empreunter cet arc
+				if (arcTest.getSommetDestination().getNumbPixel() == -1) { //On regarde si la destination est le puit
 					path.addPath(arcTest);
 					path.setFlotMin(Math.min(path.getFlotMin(),arcTest.getCapacite()-arcTest.getFlot()));
-					return path;
+					return path; //Si c'est le cas, on ajoute l'arc et on retourne le chemin
 				}
-				if(path.addPath(arcTest)){
+				if(path.addPath(arcTest)){ // on ajoute l'arc au chemin
 					int flot = Math.min(path.getFlotMin(),arcTest.getCapacite()-arcTest.getFlot());
-					Path path2 = searchPath(graph, path);
+					path = searchPath(graph, path); //On continue le chemin à partir de celui-ci
 					int i = 0;
 					for(int lastSommet:path.getSommet()){
-						i = lastSommet;
+						i = lastSommet; //On reccupère le dernier sommet
 					}
-					if (i ==-1) {
+					if (i == -1) { // on vérifie si ce dernier sommet est le puit (alors il existerait un chemin jusqu'au puit)
 						path.setFlotMin(flot);
-						return path2;
+						return path;
 					}
-					path.removePath(arcTest);
+					path.removePath(arcTest); // Sinon, il s'agit d'un cul-de-sac et on retire l'arc du chemin
 				}
 			}
 			arcTest = arcTest.getNextArc();
@@ -78,18 +80,18 @@ public class Main {
 	
 	public static int CalculFlotMax (Graph graph) {
 		int flotMax = 0;
-		Arcs arc = graph.getArcs()[0];
+		Arcs arc = graph.getArcs()[0]; //On prend le premier arc partant de la source
 		while (arc != null) {
-			if (arc.getFlot() >= arc.getCapacite()){
+			if (arc.getFlot() >= arc.getCapacite()){ // On verifie si on peut emprunter cet arc
 				arc = arc.getNextArc();
 			}else{
-				Path path = searchPath(graph, new Path(arc));
-				if(path.getPath().size() != 1) {
+				Path path = searchPath(graph, new Path(arc)); // On essaye de trouver un chemin entre la source et le puit
+				if(path.getPath().size() != 1) { //Si on a plus d'un arc dans le chemin alors on à un chemin allant jusqu'au puit
 					int minf = path.getFlotMin();
 					flotMax += minf;
 					for(Arcs arcPath:path.getPath()){
 						arcPath.setFlot(minf);
-						if(arcPath.getSommetDestination().getNumbPixel() != -1) {
+						if(arcPath.getSommetDestination().getNumbPixel() != -1) { // On complete les arcs retours
 							Arcs arcDestination = graph.getArcs()[arcPath.getSommetDestination().getNumbPixel()];
 							while(arcDestination != null) {
 								if (arcDestination.getSommetDestination().getNumbPixel() == arcPath.getSommetOrigin().getNumbPixel()) {
@@ -100,7 +102,7 @@ public class Main {
 							
 						}
 					}
-				}else{
+				}else{ //Si on ne trouve pas de chemin, on passe à l'arc suivant
 					arc = arc.getNextArc();
 				}
 			}
@@ -111,7 +113,7 @@ public class Main {
 	private static void profondeur(Graph graph, int sommet) {
 		Arcs arc = graph.getArcs()[sommet];
 		while(arc != null) {
-			if (arc.getCapacite() - arc.getFlot() > 0 && !arc.getSommetDestination().getSetA()) {
+			if (arc.getCapacite() - arc.getFlot() > 0 && !arc.getSommetDestination().getSetA()) { // si on peut acceder au sommet suivant et que celui-ci n'a pas encore été visité, alors on le visite
 				arc.getSommetDestination().setSetA(true);
 				profondeur(graph,arc.getSommetDestination().getNumbPixel());
 			}
@@ -123,17 +125,25 @@ public class Main {
 		profondeur(graph,0);
 	}
 	
-	public static void ResoudreBinIm () throws IOException {
-		System.out.println("Nom du fichier dans le repertoire fichier (avec l'extension) ?");
-		Scanner lectureKB = new Scanner(System.in);
-		String fichier = lectureKB.nextLine();
-		
+	public static Graph ResoudreBinIm (String file) throws IOException {
 		long debut = System.currentTimeMillis();
-		Graph graph = ConstructionReseau("../fichier/"+fichier);
+		Graph graph = ConstructionReseau("../fichier/"+file);
 		int flotMax = CalculFlotMax(graph);
 		System.out.println("Flot maximum = "+flotMax);
 		CalculCoupeMin(graph);
 		System.out.println("Temps d'execution des fonctions pour calculer la coupe : " + (System.currentTimeMillis() - debut) + "ms");
+		return graph;
+	}
+	
+	
+	public static void main(String[] arg) throws IOException {
+		System.out.println("Nom du fichier dans le repertoire fichier (avec l'extension) ?");
+		Scanner lectureKB = new Scanner(System.in);
+		String file = lectureKB.nextLine();
+		Graph graph = ResoudreBinIm(file);
+		
+		
+		//AFFICHAGE DES RESULTATS//
 		
 		Pixel[] pixels = graph.getPixels();
 		int choix;
@@ -142,6 +152,9 @@ public class Main {
 			choix = lectureKB.nextInt();
 		}while(choix != 1 && choix != 2);
 		lectureKB.close();
+		
+		
+		//CHOIX 2
 		
 		if(choix == 2) {
 			System.out.println("--------------------------------------------");
@@ -154,6 +167,9 @@ public class Main {
 			System.out.println("--------------------------------------------");
 			System.out.println("");
 		}else {
+			
+			//CHOIX 1
+			
 			for (int i = 0 ; i < graph.getRow(); i++) {
 				System.out.print("--");
 			}
@@ -173,10 +189,5 @@ public class Main {
 			}
 			System.out.println("--");
 		}
-	}
-	
-	
-	public static void main(String[] arg) throws IOException {
-		ResoudreBinIm();
 	}
 }

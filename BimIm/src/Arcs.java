@@ -1,7 +1,7 @@
 public class Arcs {
 	private int capacite;
-	private int flot;
-	private Arcs nextArc;
+	private int flot; //flot passant actuellement dans l'arc
+	private Arcs nextArc; //arc suivant dans la liste
 	private Pixel sommetOrigin;
 	private Pixel sommetDestination;
 	
@@ -33,11 +33,11 @@ public class Arcs {
 		return this.sommetDestination;
 	}
 
-	public void setFlot(int flot) {
-		this.flot += flot;
+	public void setFlot(int variation) { 
+		this.flot += variation;
 	}
 	
-	public void setNext(Arcs arc) {
+	public void setNextArc(Arcs arc) {
 		this.nextArc = arc;
 	}
 }
