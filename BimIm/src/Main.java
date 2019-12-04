@@ -9,33 +9,33 @@ public class Main {
 		java.util.Scanner lecteur ;
 		java.io.File fichier = new File(file);
 		lecteur = new Scanner(fichier);
-		int n = lecteur.nextInt();
-		int m = lecteur.nextInt();
+		int line = lecteur.nextInt();
+		int row = lecteur.nextInt();
 		
-		Graph graph = new Graph(n,m);
-		for(int i = 0; i < n; i++) {
-			for(int j = 0; j < m; j++) {
-				Pixel p = new Pixel(i,j,i*m+j+1);
-				graph.addPixel(p,i*m+j+1);
-				graph.addProba(i*m+j+1, lecteur.nextInt(), true);
+		Graph graph = new Graph(line,row);
+		for(int i = 0; i < line; i++) {
+			for(int j = 0; j < row; j++) {
+				Pixel pixel = new Pixel(i,j,i*row+j+1);
+				graph.addPixel(pixel,i*row+j+1);
+				graph.addProba(i*row+j+1, lecteur.nextInt(), true);
 			}
 		}
 		
-		for(int i = 0; i < n; i++) {
-			for(int j = 0; j < m; j++) {
-				graph.addProba(i*m+j+1, lecteur.nextInt(), false);
+		for(int i = 0; i < line; i++) {
+			for(int j = 0; j < row; j++) {
+				graph.addProba(i*row+j+1, lecteur.nextInt(), false);
 			}
 		}
 		
-		for(int i = 0; i < n; i++) {
-			for(int j = 0; j < m-1; j++) {
-				graph.addPena(lecteur.nextInt(),i*m+j+1,i*m+j+2);
+		for(int i = 0; i < line; i++) {
+			for(int j = 0; j < row-1; j++) {
+				graph.addPenalite(lecteur.nextInt(),i*row+j+1,i*row+j+2);
 			}
 		}
 		
-		for(int i = 0; i < n-1; i++) {
-			for(int j = 0; j < m; j++) {
-				graph.addPena(lecteur.nextInt(),i*m+j+1,(i+1)*m+j+1);
+		for(int i = 0; i < line-1; i++) {
+			for(int j = 0; j < row; j++) {
+				graph.addPenalite(lecteur.nextInt(),i*row+j+1,(i+1)*row+j+1);
 			}
 		}
 		
@@ -44,93 +44,97 @@ public class Main {
 	}
 	
 	
-	private static Path chemin(Graph g, Path path) {
-		Flot p = g.getFlots()[0];
-		for(Flot p2:path.getPath()){
-			p = p2;
+	private static Path searchPath(Graph graph, Path path) {
+		Arcs arcTest = graph.getArcs()[0];
+		for(Arcs lastArc:path.getPath()){
+			arcTest = lastArc;
 		}
-		p = g.getFlots()[p.getVoisin().getNumbPixel()];
-		while(p != null) {
-			if(p.getFlot() < p.getCapacite()) {
-				if (p.getVoisin().getNumbPixel() == -1) {
-					path.addPath(p);
-					path.setFlotMin(Math.min(path.getFlotMin(),p.getCapacite()-p.getFlot()));
+		arcTest = graph.getArcs()[arcTest.getSommetDestination().getNumbPixel()];
+		while(arcTest != null) {
+			if(arcTest.getFlot() < arcTest.getCapacite()) {
+				if (arcTest.getSommetDestination().getNumbPixel() == -1) {
+					path.addPath(arcTest);
+					path.setFlotMin(Math.min(path.getFlotMin(),arcTest.getCapacite()-arcTest.getFlot()));
 					return path;
 				}
-				if(path.addPath(p)){
-					int flot = Math.min(path.getFlotMin(),p.getCapacite()-p.getFlot());
-					Path path2 = chemin(g, path);
+				if(path.addPath(arcTest)){
+					int flot = Math.min(path.getFlotMin(),arcTest.getCapacite()-arcTest.getFlot());
+					Path path2 = searchPath(graph, path);
 					int i = 0;
-					for(int p2:path.getSommet()){
-						i = p2;
+					for(int lastSommet:path.getSommet()){
+						i = lastSommet;
 					}
 					if (i ==-1) {
-						path.setFlotMin(Math.min(path.getFlotMin(),flot));
+						path.setFlotMin(flot);
 						return path2;
 					}
-					path.removePath(p);
+					path.removePath(arcTest);
 				}
 			}
-			p = p.getNext();
+			arcTest = arcTest.getNextArc();
 		}
 		return path;
 	}
 	
-	public static int CalculFlotMax (Graph g) {
-		int flot = 0;
-		Flot f = g.getFlots()[0];
-		while (f != null) {
-			if (f.getFlot() >= f.getCapacite()){
-				f = f.getNext();
+	public static int CalculFlotMax (Graph graph) {
+		int flotMax = 0;
+		Arcs arc = graph.getArcs()[0];
+		while (arc != null) {
+			if (arc.getFlot() >= arc.getCapacite()){
+				arc = arc.getNextArc();
 			}else{
-				Path p = chemin(g, new Path(f));
-				if(p.getPath().size() != 1) {
-					int minf = p.getFlotMin();
-					flot += minf;
-					for(Flot f2:p.getPath()){
-						f2.setFlot(minf);
-						if(f2.getVoisin().getNumbPixel() != -1) {
-							Flot f3 = g.getFlots()[f2.getVoisin().getNumbPixel()];
-							while(f3 != null) {
-								if (f3.getVoisin().getNumbPixel() == f2.getSommet().getNumbPixel()) {
-									f3.setFlot(-minf);
+				Path path = searchPath(graph, new Path(arc));
+				if(path.getPath().size() != 1) {
+					int minf = path.getFlotMin();
+					flotMax += minf;
+					for(Arcs arcPath:path.getPath()){
+						arcPath.setFlot(minf);
+						if(arcPath.getSommetDestination().getNumbPixel() != -1) {
+							Arcs arcDestination = graph.getArcs()[arcPath.getSommetDestination().getNumbPixel()];
+							while(arcDestination != null) {
+								if (arcDestination.getSommetDestination().getNumbPixel() == arcPath.getSommetOrigin().getNumbPixel()) {
+									arcDestination.setFlot(-minf);
 								}
-								f3 = f3.getNext();
+								arcDestination = arcDestination.getNextArc();
 							}
 							
 						}
 					}
 				}else{
-					f = f.getNext();
+					arc = arc.getNextArc();
 				}
 			}
 		}
-		return flot;
+		return flotMax;
 	}
 	
-	private static void profondeur(Graph g, int sommet) {
-		Flot f = g.getFlots()[sommet];
-		while(f != null) {
-			if (f.getCapacite() - f.getFlot() > 0 && !f.getVoisin().getSet()) {
-				f.getVoisin().setSet(true);
-				profondeur(g,f.getVoisin().getNumbPixel());
+	private static void profondeur(Graph graph, int sommet) {
+		Arcs arc = graph.getArcs()[sommet];
+		while(arc != null) {
+			if (arc.getCapacite() - arc.getFlot() > 0 && !arc.getSommetDestination().getSetA()) {
+				arc.getSommetDestination().setSetA(true);
+				profondeur(graph,arc.getSommetDestination().getNumbPixel());
 			}
-			f = f.getNext();
+			arc = arc.getNextArc();
 		}
 	}
 	
-	public static void CalculCoupeMin(Graph g) {
-		profondeur(g,0);
+	public static void CalculCoupeMin(Graph graph) {
+		profondeur(graph,0);
 	}
 	
 	public static void ResoudreBinIm () throws IOException {
 		System.out.println("Nom du fichier dans le répertoir fichier (avec l'extension) ?");
 		Scanner lectureKB = new Scanner(System.in);
 		String fichier = lectureKB.nextLine();
+		long debut = System.currentTimeMillis();
+		
 		Graph graph = ConstructionReseau("../fichier/"+fichier);
 		int flotMax = CalculFlotMax(graph);
 		System.out.println("Flot maximum = "+flotMax);
 		CalculCoupeMin(graph);
+		System.out.println("Temps d'éxécution des fonctions pour calculer la coupe : " + (System.currentTimeMillis() - debut) + "ms");
+		
 		Pixel[] pixels = graph.getPixels();
 		int choix;
 		do {
@@ -142,7 +146,7 @@ public class Main {
 		if(choix == 2) {
 			System.out.println("--------------------------------------------");
 			for (int i = 1; i < pixels.length-1; i++) {
-				if (pixels[i].getSet())
+				if (pixels[i].getSetA())
 					System.out.println("Pixel de coordonné "+pixels[i].getCoordi()+","+pixels[i].getCoordj()+" : Ensemble A");
 				else
 					System.out.println("Pixel de coordonné "+pixels[i].getCoordi()+","+pixels[i].getCoordj()+" : Ensemble B");
@@ -150,9 +154,9 @@ public class Main {
 			System.out.println("--------------------------------------------");
 		}else {
 			System.out.println("--------------------------------------------");
-			for(int i = 0; i < graph.getN(); i++) {
-				for(int j = 0; j < graph.getM(); j++) {
-					if (pixels[i*graph.getM()+j+1].getSet())
+			for(int i = 0; i < graph.getLine(); i++) {
+				for(int j = 0; j < graph.getRow(); j++) {
+					if (pixels[i*graph.getRow()+j+1].getSetA())
 						System.out.print("A ");
 					else
 						System.out.print("  ");

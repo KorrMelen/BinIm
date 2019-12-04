@@ -1,52 +1,52 @@
 public class Pixel {
 	private int coordi;
 	private int coordj;
-	private int a;
-	private int b;
+	private int probaA;
+	private int probaB;
 	private int numbPixel;
-	private boolean set;
+	private boolean setA;
 	
 	public Pixel(int coordi, int coordj, int numbPixel) {
 		this.coordi = coordi;
 		this.coordj = coordj;
 		this.numbPixel = numbPixel;
-		this.set = false;
+		this.setA = false;
 	}
 	
-	public void setA(int a) {
-		this.a = a;
+	public void setProbaA(int a) {
+		this.probaA = a;
 	}
 
-	public void setB(int b) {
-		this.b = b;
+	public void setProbaB(int b) {
+		this.probaB = b;
 	}
 
-	public void setSet(boolean set) {
-		this.set = set;
+	public void setSetA(boolean set) {
+		this.setA = set;
 	}
 
 	public int getCoordi() {
-		return coordi;
+		return this.coordi;
 	}
 
 	public int getCoordj() {
-		return coordj;
+		return this.coordj;
 	}
 
-	public int getA() {
-		return a;
+	public int getProbaA() {
+		return this.probaA;
 	}
 
-	public int getB() {
-		return b;
+	public int getProbaB() {
+		return this.probaB;
 	}
 	
 	public int getNumbPixel() {
 		return this.numbPixel;
 	}
 
-	public boolean getSet() {
-		return set;
+	public boolean getSetA() {
+		return this.setA;
 	}
 	
 }
