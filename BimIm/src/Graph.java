@@ -1,60 +1,60 @@
 public class Graph {
 	private Pixel pixels[];
-	private Flot arc[];
-	private int n;
-	private int m;
-	private Pixel s;
-	private Pixel t;
+	private Arcs arcs[];
+	private int line;
+	private int row;
+	private Pixel source;
+	private Pixel well;
 	
-	public Graph(int n, int m) {
-		this.n = n;
-		this.m = m;
-		this.pixels = new Pixel [n*m+2];
-		this.arc = new Flot [n*m+2];
-		this.s = new Pixel(-1,-1,0);
-		this.t = new Pixel(-1,-1,-1);
-		this.pixels[0] = this.s;
-		this.pixels[n*m+1] = this.t;
+	public Graph(int line, int row) {
+		this.line = line;
+		this.row = row;
+		this.pixels = new Pixel [line*row+2];
+		this.arcs = new Arcs [line*row+2];
+		this.source = new Pixel(-1,-1,0);
+		this.well = new Pixel(-1,-1,-1);
+		this.pixels[0] = this.source;
+		this.pixels[line*row+1] = this.well;
 	}
 	
-	public int getN() {
-		return n;
+	public int getLine() {
+		return this.line;
 	}
 
-	public int getM() {
-		return m;
+	public int getRow() {
+		return this.row;
 	}
 
 	public Pixel[] getPixels() {
-		return pixels;
+		return this.pixels;
 	}
 
-	public Flot[] getFlots() {
-		return this.arc;
+	public Arcs[] getArcs() {
+		return this.arcs;
 	}
 
 	public void addPixel(Pixel pixel, int numbPixel) {
 		this.pixels[numbPixel] = pixel;		
 	}
 	
-	public void addProba (int numbPixel, int proba, boolean a) {
-		if(a) {
-			this.pixels[numbPixel].setA(proba);
-			Flot f = new Flot(proba, this.s,this.pixels[numbPixel]);
-			f.setNext(this.arc[0]);
-			this.arc[0] = f;
+	public void addProba (int numbPixel, int proba, boolean source) {
+		if(source) {
+			this.pixels[numbPixel].setProbaA(proba);
+			Arcs arc = new Arcs(proba, this.source,this.pixels[numbPixel]);
+			arc.setNext(this.arcs[0]);
+			this.arcs[0] = arc;
 		}else{
-			this.pixels[numbPixel].setB(proba);
-			this.arc[numbPixel] = new Flot(proba, this.pixels[numbPixel], this.t);
+			this.pixels[numbPixel].setProbaB(proba);
+			this.arcs[numbPixel] = new Arcs(proba, this.pixels[numbPixel], this.well);
 		}
 	}
 	
-	public void addPena(int pena, int numbPixel1, int numbPixel2){
-		Flot f1 = new Flot(pena, this.pixels[numbPixel1], this.pixels[numbPixel2]);
-		f1.setNext(this.arc[numbPixel1]);
-		this.arc[numbPixel1] = f1;
-		Flot f2 = new Flot(pena, this.pixels[numbPixel2], this.pixels[numbPixel1]);
-		f2.setNext(this.arc[numbPixel2]);
-		this.arc[numbPixel2] = f2;
+	public void addPenalite(int penalite, int numbPixel1, int numbPixel2){
+		Arcs arc12 = new Arcs(penalite, this.pixels[numbPixel1], this.pixels[numbPixel2]);
+		arc12.setNext(this.arcs[numbPixel1]);
+		this.arcs[numbPixel1] = arc12;
+		Arcs arc21 = new Arcs(penalite, this.pixels[numbPixel2], this.pixels[numbPixel1]);
+		arc21.setNext(this.arcs[numbPixel2]);
+		this.arcs[numbPixel2] = arc21;
 	}
 }

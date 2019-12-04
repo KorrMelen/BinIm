@@ -2,51 +2,51 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Path {
-	private Set<Flot> path;
-	private Set<Integer> sommet;
+	private Set<Arcs> path;
+	private Set<Integer> sommets;
 	private int flotMin;
 	
-	public Path(Flot f) {
-		this.path = new LinkedHashSet<Flot>();
-		this.sommet = new LinkedHashSet<Integer>();
-		this.path.add(f);
-		this.sommet.add(0);
-		this.sommet.add(f.getVoisin().getNumbPixel());
-		this.flotMin = f.getCapacite()-f.getFlot();
+	public Path(Arcs firstArc) {
+		this.path = new LinkedHashSet<Arcs>();
+		this.sommets = new LinkedHashSet<Integer>();
+		this.path.add(firstArc);
+		this.sommets.add(0);
+		this.sommets.add(firstArc.getSommetDestination().getNumbPixel());
+		this.flotMin = firstArc.getCapacite()-firstArc.getFlot();
 	}
 
-	public Set<Flot> getPath() {
-		return path;
+	public Set<Arcs> getPath() {
+		return this.path;
 	}
 
 	public int getFlotMin() {
-		return flotMin;
+		return this.flotMin;
 	}
 	
 	public Set<Integer> getSommet(){
-		return this.sommet;
+		return this.sommets;
 	}
 
 	public void setFlotMin(int flotMin) {
-		this.flotMin = flotMin;
+		this.flotMin = Math.min(this.flotMin, flotMin);
 	}
 	
 	private boolean addsommet(int s) {
-		return (this.sommet.add(s));
+		return this.sommets.add(s);
 	}
 	
 	public void removeSommet(int s) {
-		this.sommet.remove(s);
+		this.sommets.remove(s);
 	}
 	
-	public boolean addPath(Flot p) {
-		if(this.addsommet(p.getVoisin().getNumbPixel()))
-			return (this.path.add(p));
+	public boolean addPath(Arcs arc) {
+		if(this.addsommet(arc.getSommetDestination().getNumbPixel()))
+			return (this.path.add(arc));
 		else return false;
 	}
 	
-	public void removePath(Flot p) {
-		this.removeSommet(p.getVoisin().getNumbPixel());
-		this.path.remove(p);
+	public void removePath(Arcs arc) {
+		this.removeSommet(arc.getSommetDestination().getNumbPixel());
+		this.path.remove(arc);
 	}
 }
