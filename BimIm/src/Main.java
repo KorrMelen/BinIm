@@ -124,21 +124,21 @@ public class Main {
 	}
 	
 	public static void ResoudreBinIm () throws IOException {
-		System.out.println("Nom du fichier dans le répertoir fichier (avec l'extension) ?");
+		System.out.println("Nom du fichier dans le repertoire fichier (avec l'extension) ?");
 		Scanner lectureKB = new Scanner(System.in);
 		String fichier = lectureKB.nextLine();
-		long debut = System.currentTimeMillis();
 		
+		long debut = System.currentTimeMillis();
 		Graph graph = ConstructionReseau("../fichier/"+fichier);
 		int flotMax = CalculFlotMax(graph);
 		System.out.println("Flot maximum = "+flotMax);
 		CalculCoupeMin(graph);
-		System.out.println("Temps d'éxécution des fonctions pour calculer la coupe : " + (System.currentTimeMillis() - debut) + "ms");
+		System.out.println("Temps d'execution des fonctions pour calculer la coupe : " + (System.currentTimeMillis() - debut) + "ms");
 		
 		Pixel[] pixels = graph.getPixels();
 		int choix;
 		do {
-			System.out.println("Représentation des resultat en format graphique ou text (1 ou 2) ?");
+			System.out.println("Representation des resultat en format graphique ou texte (1 ou 2) ?");
 			choix = lectureKB.nextInt();
 		}while(choix != 1 && choix != 2);
 		lectureKB.close();
@@ -152,18 +152,26 @@ public class Main {
 					System.out.println("Pixel de coordonné "+pixels[i].getCoordi()+","+pixels[i].getCoordj()+" : Ensemble B");
 			}
 			System.out.println("--------------------------------------------");
+			System.out.println("");
 		}else {
-			System.out.println("--------------------------------------------");
+			for (int i = 0 ; i < graph.getRow(); i++) {
+				System.out.print("--");
+			}
+			System.out.println("--");
 			for(int i = 0; i < graph.getLine(); i++) {
+				System.out.print("|");
 				for(int j = 0; j < graph.getRow(); j++) {
 					if (pixels[i*graph.getRow()+j+1].getSetA())
 						System.out.print("A ");
 					else
 						System.out.print("  ");
 				}
-				System.out.println();
+				System.out.println("|");
 			}
-			System.out.println("--------------------------------------------");
+			for (int i = 0 ; i < graph.getRow(); i++) {
+				System.out.print("--");
+			}
+			System.out.println("--");
 		}
 	}
 	
