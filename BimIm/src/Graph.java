@@ -12,7 +12,6 @@ public class Graph {
 		this.pixels = new Pixel [n*m+2];
 		this.arc = new Flot [n*m+2];
 		this.s = new Pixel(-1,-1,0);
-		//this.s.setH(n*m+2);
 		this.t = new Pixel(-1,-1,-1);
 		this.pixels[0] = this.s;
 		this.pixels[n*m+1] = this.t;
@@ -42,10 +41,8 @@ public class Graph {
 		if(a) {
 			this.pixels[numbPixel].setA(proba);
 			Flot f = new Flot(proba, this.s,this.pixels[numbPixel]);
-			//f.setAntiflot(-proba);
 			f.setNext(this.arc[0]);
 			this.arc[0] = f;
-			//this.s.setE(this.s.getE()-proba);
 		}else{
 			this.pixels[numbPixel].setB(proba);
 			this.arc[numbPixel] = new Flot(proba, this.pixels[numbPixel], this.t);
@@ -60,29 +57,4 @@ public class Graph {
 		f2.setNext(this.arc[numbPixel2]);
 		this.arc[numbPixel2] = f2;
 	}
-	
-//	public void addPena(int pena, int coori1, int coorj1, int coori2, int coorj2) {
-//		Pixel p1 = pixels[coori1][coorj1];
-//		Pixel p2 = pixels[coori2][coorj2];
-//		Flot f2 = new Flot(p2, pena);
-//		Flot f1 =new Flot(p1, pena);
-//		if (this.flots[coori1*this.pixels[0].length+coorj1+1] != null){
-//			this.flots[coori1*this.pixels[0].length+coorj1+1].addSuiv(f2);
-//		}else{
-//			this.flots[coori1*this.pixels[0].length+coorj1+1] = f2;
-//		}
-//		
-//		if (this.flots[coori2*this.pixels[0].length+coorj2+1] != null){
-//			this.flots[coori2*this.pixels[0].length+coorj2+1].addSuiv(f1);
-//		}else{
-//			this.flots[coori2*this.pixels[0].length+coorj2+1] = f1;
-//		}		
-//	}
-//	
-//	public void addpuit() {
-//		for (int i = 1; i < this.flots.length-1;i++) {
-//			int flot = pixels[i/pixels.length][i%pixels[0].length].getB();
-//			this.flots[i].addSuiv(new Flot(new Pixel(-1,-1),flot));
-//		}
-//	}
 }

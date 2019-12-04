@@ -4,36 +4,24 @@ public class Pixel {
 	private int a;
 	private int b;
 	private int numbPixel;
-	//private int h;
-	//private int e;
-	private char set;
+	private boolean set;
 	
 	public Pixel(int coordi, int coordj, int numbPixel) {
 		this.coordi = coordi;
 		this.coordj = coordj;
 		this.numbPixel = numbPixel;
-		//this.h = 0;
-		//this.e = 0;
+		this.set = false;
 	}
 	
 	public void setA(int a) {
 		this.a = a;
-		//this.e = a;
 	}
-
-//	public void setH(int h) {
-//		this.h = h;
-//	}
-//
-//	public void setE(int e) {
-//		this.e = e;
-//	}
 
 	public void setB(int b) {
 		this.b = b;
 	}
 
-	public void setSet(char set) {
+	public void setSet(boolean set) {
 		this.set = set;
 	}
 
@@ -57,15 +45,7 @@ public class Pixel {
 		return this.numbPixel;
 	}
 
-//	public int getH() {
-//		return h;
-//	}
-//
-//	public int getE() {
-//		return e;
-//	}
-	
-	public char getSet() {
+	public boolean getSet() {
 		return set;
 	}
 	
