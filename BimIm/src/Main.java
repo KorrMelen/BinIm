@@ -168,58 +168,99 @@ public class Main {
 	}
 	
 	
-	public static void main(String[] arg) throws IOException {
-		System.out.println("Nom du fichier dans le repertoire fichier (avec l'extension) ?");
-		Scanner lectureKB = new Scanner(System.in);
-		String file = lectureKB.nextLine();
-		Graph graph = ResoudreBinIm(file);
-		
-		
-		//AFFICHAGE DES RESULTATS//
-		
+	public static void affichage(Graph graph, Scanner lectureKB) {
 		Pixel[] pixels = graph.getPixels();
 		int choix;
 		do {
-			System.out.println("Representation des resultat en format graphique ou texte (1 ou 2) ?");
-			choix = lectureKB.nextInt();
-		}while(choix != 1 && choix != 2);
-		lectureKB.close();
-		
-		
-		//CHOIX 2
-		
-		if(choix == 2) {
-			System.out.println("--------------------------------------------");
-			for (int i = 1; i < pixels.length-1; i++) {
-				if (pixels[i].getSetA())
-					System.out.println("Pixel de coordonné "+pixels[i].getCoordi()+","+pixels[i].getCoordj()+" : Ensemble A");
-				else
-					System.out.println("Pixel de coordonné "+pixels[i].getCoordi()+","+pixels[i].getCoordj()+" : Ensemble B");
-			}
-			System.out.println("--------------------------------------------");
-			System.out.println("");
-		}else {
+			do {
+				System.out.println("Representation des resulta :");
+				System.out.println("1) Graphique");
+				System.out.println("2) Text (pixel -> ensemble)");
+				System.out.println("3) Text (ensemble -> pixel)");
+				System.out.println("4) Fin de l'affichage");
+				choix = lectureKB.nextInt();
+			}while(choix > 4 || choix < 1);
 			
-			//CHOIX 1
+			if (choix == 4) break;
 			
-			for (int i = 0 ; i < graph.getRow(); i++) {
-				System.out.print("--");
-			}
-			System.out.println("--");
-			for(int i = 0; i < graph.getLine(); i++) {
-				System.out.print("|");
-				for(int j = 0; j < graph.getRow(); j++) {
-					if (pixels[i*graph.getRow()+j+1].getSetA())
-						System.out.print("[]");
+			//CHOIX 2
+
+			if(choix == 2) {
+				System.out.println("--------------------------------------------");
+				for (int i = 1; i < pixels.length-1; i++) {
+					if (pixels[i].getSetA())
+						System.out.println("Pixel de coordonné "+pixels[i].getCoordi()+","+pixels[i].getCoordj()+" : Ensemble A");
 					else
-						System.out.print("  ");
+						System.out.println("Pixel de coordonné "+pixels[i].getCoordi()+","+pixels[i].getCoordj()+" : Ensemble B");
 				}
-				System.out.println("|");
+				System.out.println("--------------------------------------------");
+			}else{
+				//CHOIX 1
+				if(choix == 1) {
+					System.out.print("+");
+					for (int i = 0 ; i < graph.getRow(); i++) {
+						System.out.print("--");
+					}
+					System.out.println("+");
+					for(int i = 0; i < graph.getLine(); i++) {
+						System.out.print("|");
+						for(int j = 0; j < graph.getRow(); j++) {
+							if (pixels[i*graph.getRow()+j+1].getSetA())
+								System.out.print("[]");
+							else
+								System.out.print("  ");
+						}
+						System.out.println("|");
+					}
+					System.out.print("+");
+					for (int i = 0 ; i < graph.getRow(); i++) {
+						System.out.print("--");
+					}
+					System.out.println("+");
+				}else{
+					//CHOIX 3
+					System.out.println("--------------------------------------------");
+					System.out.print(" Ensemble A :{");
+					for (int i = 1; i < pixels.length-1; i++) {
+						if (pixels[i].getSetA())
+							System.out.print("("+pixels[i].getCoordi()+","+pixels[i].getCoordj()+"),");
+					}
+
+					System.out.println("\b}");
+					System.out.println("--------------------------------------------");
+					System.out.print(" Ensemble B :{");
+					for (int i = 1; i < pixels.length-1; i++) {
+						if (!pixels[i].getSetA())
+							System.out.print("("+pixels[i].getCoordi()+","+pixels[i].getCoordj()+"),");
+					}
+					System.out.println("\b}");
+					System.out.println("--------------------------------------------");
+				}
 			}
-			for (int i = 0 ; i < graph.getRow(); i++) {
-				System.out.print("--");
-			}
-			System.out.println("--");
-		}
+		}while(true);
+	}
+	
+	
+	public static void main(String[] arg) throws IOException {
+		Scanner lectureKB = new Scanner(System.in);
+		File repertoire = new File("../fichier");
+        String liste[] = repertoire.list();
+        int i;
+        int file;
+        do {
+        	do {
+	        	System.out.println("Fichier disponible dans le dossier \"fichier\". Selectionnez le fichier voulu");
+	            for (i = 1 ; i <= liste.length; i++) {
+	                System.out.println(i +") "+liste[i-1]);
+	            }
+	            System.out.println(i +") Fin du programme");
+	    		file = lectureKB.nextInt();
+        	}while(file >= liste.length + 2 || file < 1);
+    		if(file == i) break;
+    		Graph graph = ResoudreBinIm(liste[file-1]);
+    		affichage(graph, lectureKB);
+        }while(true);	
+
+		lectureKB.close();
 	}
 }
