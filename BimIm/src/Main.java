@@ -174,12 +174,12 @@ public class Main {
 		do {
 			do {
 				System.out.println("Representation des resulta :");
+				System.out.println("0) Fin de l'affichage");
 				System.out.println("1) Graphique");
 				System.out.println("2) Text (pixel -> ensemble)");
 				System.out.println("3) Text (ensemble -> pixel)");
-				System.out.println("4) Fin de l'affichage");
 				choix = lectureKB.nextInt();
-			}while(choix > 4 || choix < 1);
+			}while(choix > 3 || choix < 0);
 			
 			if (choix == 4) break;
 			
@@ -250,13 +250,13 @@ public class Main {
         do {
         	do {
 	        	System.out.println("Fichier disponible dans le dossier \"fichier\". Selectionnez le fichier voulu");
+	        	System.out.println("0) Fin du programme");
 	            for (i = 1 ; i <= liste.length; i++) {
 	                System.out.println(i +") "+liste[i-1]);
 	            }
-	            System.out.println(i +") Fin du programme");
 	    		file = lectureKB.nextInt();
-        	}while(file >= liste.length + 2 || file < 1);
-    		if(file == i) break;
+        	}while(file >= liste.length + 1 || file < 0);
+    		if(file == 0) break;
     		Graph graph = ResoudreBinIm(liste[file-1]);
     		affichage(graph, lectureKB);
         }while(true);	
