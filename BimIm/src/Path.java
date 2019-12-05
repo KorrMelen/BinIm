@@ -11,7 +11,7 @@ public class Path {
 		this.sommets = new LinkedHashSet<Integer>(); //idem pour les sommets
 		this.path.add(firstArc);
 		this.sommets.add(0); //indice de la source
-		this.sommets.add(firstArc.getSommetDestination().getNumbPixel()); //On ajoute l'indice de la destination de l'arc
+		this.sommets.add(firstArc.getSommetDestination().getPixelNumberl()); //On ajoute l'indice de la destination de l'arc
 		this.flotMin = firstArc.getCapacite()-firstArc.getFlot(); //Initialisation du minimum du chemin
 	}
 
@@ -40,13 +40,13 @@ public class Path {
 	}
 	
 	public boolean addPath(Arcs arc) { //Avant d'ajouter un arc, on verifie qu'on peut ajouter le sommet de destiantion
-		if(this.addsommet(arc.getSommetDestination().getNumbPixel()))
+		if(this.addsommet(arc.getSommetDestination().getPixelNumberl()))
 			return (this.path.add(arc)); //Retroune true si on à réussie à ajouter l'arc
 		else return false;
 	}
 	
 	public void removePath(Arcs arc) {
-		this.removeSommet(arc.getSommetDestination().getNumbPixel());
+		this.removeSommet(arc.getSommetDestination().getPixelNumberl());
 		this.path.remove(arc);
 	}
 }

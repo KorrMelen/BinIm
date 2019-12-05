@@ -3,18 +3,14 @@ public class Graph {
 	private Arcs arcs[];
 	private int line;
 	private int row;
-	private Pixel source;
-	private Pixel well;
 	
 	public Graph(int line, int row) {
 		this.line = line;
 		this.row = row;
 		this.pixels = new Pixel [line*row+2];
 		this.arcs = new Arcs [line*row+2];
-		this.source = new Pixel(-1,-1,0);
-		this.well = new Pixel(-1,-1,-1);
-		this.pixels[0] = this.source;
-		this.pixels[line*row+1] = this.well;
+		this.pixels[0] = new Pixel(-1,-1,0);
+		this.pixels[line*row+1] = new Pixel(-1,-1,-1);
 	}
 	
 	public int getLine() {
@@ -37,18 +33,18 @@ public class Graph {
 		this.pixels[numbPixel] = pixel;		
 	}
 	
+	//compléxité en O(1), il y a seulement des accès et des affectations
 	public void addProba (int numbPixel, int proba, boolean source) {
 		if(source) {
-			//this.pixels[numbPixel].setProbaA(proba);
-			Arcs arc = new Arcs(proba, this.source, this.pixels[numbPixel]); // crée un arc entre la source et un pixel avec une capacité de "proba"
+			Arcs arc = new Arcs(proba, this.pixels[0], this.pixels[numbPixel]); // crée un arc entre la source et un pixel avec une capacité de "proba"
 			arc.setNextArc(this.arcs[0]);
 			this.arcs[0] = arc;
 		}else{
-			//this.pixels[numbPixel].setProbaB(proba);
-			this.arcs[numbPixel] = new Arcs(proba, this.pixels[numbPixel], this.well);// crée un arc entre un pixel et le puit avec une capacité de "proba"
+			this.arcs[numbPixel] = new Arcs(proba, this.pixels[numbPixel], this.pixels[this.line*this.row+1]);// crée un arc entre un pixel et le puit avec une capacité de "proba"
 		}
 	}
 	
+	//compléxité en O(1), il y a seulement des accès et des affectations
 	public void addPenalite(int penalite, int numbPixel1, int numbPixel2){// crée deux arcs de sens opposé entre deux pixels avec une capacité de "penalite" chacun
 		Arcs arc12 = new Arcs(penalite, this.pixels[numbPixel1], this.pixels[numbPixel2]);
 		arc12.setNextArc(this.arcs[numbPixel1]);

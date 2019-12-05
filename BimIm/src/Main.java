@@ -5,6 +5,12 @@ import java.lang.Math;
 
 public class Main {
 	
+	/* 
+	 * Compléxité en O(n)
+	 * Il y a 4 parcourt de la taille des données
+	 * Dans chaqu'un de ces parcours, des actions effectuées ce font en O(1)
+	 */
+	
 	public static Graph ConstructionReseau (String file) throws java.io.IOException {
 		java.util.Scanner lecteur ;
 		java.io.File fichier = new File(file);
@@ -44,6 +50,12 @@ public class Main {
 		return graph;
 	}
 	
+	/*
+	 * Compléxité en O(n)
+	 * C'est un parcours en profondeur et le nombre d'arc est en O(n) 
+	 * Avant de commencer le parcourt il y a un autre parcourt en O(n)
+	 * Ce qui fait une complexitée en O(n+n), donc en O(n)
+	 */
 	
 	private static Path searchPath(Graph graph, Path path) {
 		//Arcs arcTest = graph.getArcs()[0];
@@ -54,7 +66,7 @@ public class Main {
 		Arcs arcTest = graph.getArcs()[pixel]; // On regarde tous les arcs qui partent du dernier sommet
 		while(arcTest != null) {
 			if(arcTest.getFlot() < arcTest.getCapacite()) { // Si on peut empreunter cet arc
-				if (arcTest.getSommetDestination().getNumbPixel() == -1) { //On regarde si la destination est le puit
+				if (arcTest.getSommetDestination().getPixelNumberl() == -1) { //On regarde si la destination est le puit
 					path.addPath(arcTest);
 					path.setFlotMin(Math.min(path.getFlotMin(),arcTest.getCapacite()-arcTest.getFlot()));
 					return path; //Si c'est le cas, on ajoute l'arc et on retourne le chemin
@@ -78,6 +90,11 @@ public class Main {
 		return path;
 	}
 	
+	/*
+	 * Compléxité en O(n²)
+	 * Pour chaque sommet on effectue un ou plusieurs parcours en profondeur
+	 */
+	
 	public static int CalculFlotMax (Graph graph) {
 		int flotMax = 0;
 		Arcs arc = graph.getArcs()[0]; //On prend le premier arc partant de la source
@@ -91,10 +108,10 @@ public class Main {
 					flotMax += minf;
 					for(Arcs arcPath:path.getPath()){
 						arcPath.setFlot(minf);
-						if(arcPath.getSommetDestination().getNumbPixel() != -1) { // On complete les arcs retours
-							Arcs arcDestination = graph.getArcs()[arcPath.getSommetDestination().getNumbPixel()];
+						if(arcPath.getSommetDestination().getPixelNumberl() != -1) { // On complete les arcs retours
+							Arcs arcDestination = graph.getArcs()[arcPath.getSommetDestination().getPixelNumberl()];
 							while(arcDestination != null) {
-								if (arcDestination.getSommetDestination().getNumbPixel() == arcPath.getSommetOrigin().getNumbPixel()) {
+								if (arcDestination.getSommetDestination().getPixelNumberl() == arcPath.getSommetOrigin().getPixelNumberl()) {
 									arcDestination.setFlot(-minf);
 								}
 								arcDestination = arcDestination.getNextArc();
@@ -110,20 +127,35 @@ public class Main {
 		return flotMax;
 	}
 	
+	/*
+	 * Compléxité en O(n)
+	 * C'est un parcourt en profondeur et le nombre d'arc est en O(1) de la taille des données donc O(n)
+	 */
+	
 	private static void profondeur(Graph graph, int sommet) {
 		Arcs arc = graph.getArcs()[sommet];
 		while(arc != null) {
 			if (arc.getCapacite() - arc.getFlot() > 0 && !arc.getSommetDestination().getSetA()) { // si on peut acceder au sommet suivant et que celui-ci n'a pas encore été visité, alors on le visite
 				arc.getSommetDestination().setSetA(true);
-				profondeur(graph,arc.getSommetDestination().getNumbPixel());
+				profondeur(graph,arc.getSommetDestination().getPixelNumberl());
 			}
 			arc = arc.getNextArc();
 		}
 	}
 	
+	/*
+	 * Compléxité en O(n)
+	 * Appel de profondeur donc O(n)
+	 */
+	
 	public static void CalculCoupeMin(Graph graph) {
 		profondeur(graph,0);
 	}
+	
+	/*
+	 * Compléxité en O(n²)
+	 * plusieurs apelle sucesif de fonction dont la compléxité la plus haute est en O(n²)
+	 */
 	
 	public static Graph ResoudreBinIm (String file) throws IOException {
 		long debut = System.currentTimeMillis();
@@ -178,7 +210,7 @@ public class Main {
 				System.out.print("|");
 				for(int j = 0; j < graph.getRow(); j++) {
 					if (pixels[i*graph.getRow()+j+1].getSetA())
-						System.out.print("A ");
+						System.out.print("[]");
 					else
 						System.out.print("  ");
 				}
