@@ -7,8 +7,9 @@ public class Main {
 	
 	/* 
 	 * Compléxité en O(n)
-	 * Il y a 4 parcourt de la taille des données
+	 * Il y a 4 parcourt de la taille des données chacun de complexité O(n)
 	 * Dans chaqu'un de ces parcours, des actions effectuées ce font en O(1)
+	 * Donc la complexité finale est en O(4n) = O(n)
 	 */
 	
 	public static Graph ConstructionReseau (String file) throws java.io.IOException {
@@ -173,15 +174,15 @@ public class Main {
 		int choix;
 		do {
 			do {
-				System.out.println("Representation des resulta :");
+				System.out.println("Representation des resultats :");
 				System.out.println("0) Fin de l'affichage");
 				System.out.println("1) Graphique");
-				System.out.println("2) Text (pixel -> ensemble)");
-				System.out.println("3) Text (ensemble -> pixel)");
+				System.out.println("2) Texte (pixel -> ensemble)");
+				System.out.println("3) Texte (ensemble -> pixel)");
 				choix = lectureKB.nextInt();
 			}while(choix > 3 || choix < 0);
 			
-			if (choix == 4) break;
+			if (choix == 0) break;
 			
 			//CHOIX 2
 
@@ -249,7 +250,7 @@ public class Main {
         int file;
         do {
         	do {
-	        	System.out.println("Fichier disponible dans le dossier \"fichier\". Selectionnez le fichier voulu");
+	        	System.out.println("Fichier disponible dans le dossier \"fichier\". Selectionnez le fichier voulu en entrant le numéro correspondant à celui-ci :");
 	        	System.out.println("0) Fin du programme");
 	            for (i = 1 ; i <= liste.length; i++) {
 	                System.out.println(i +") "+liste[i-1]);
