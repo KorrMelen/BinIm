@@ -23,7 +23,7 @@ public class Pixel {
 		return this.coordj;
 	}
 	
-	public int getPixelNumberl() {
+	public int getPixelNumber() {
 		return this.pixelNumber;
 	}
 

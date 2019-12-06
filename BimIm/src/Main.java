@@ -67,7 +67,7 @@ public class Main {
 		Arcs arcTest = graph.getArcs()[pixel]; // On regarde tous les arcs qui partent du dernier sommet
 		while(arcTest != null) {
 			if(arcTest.getFlot() < arcTest.getCapacite()) { // Si on peut empreunter cet arc
-				if (arcTest.getSommetDestination().getPixelNumberl() == -1) { //On regarde si la destination est le puit
+				if (arcTest.getSommetDestination().getPixelNumber() == -1) { //On regarde si la destination est le puit
 					path.addPath(arcTest);
 					path.setFlotMin(Math.min(path.getFlotMin(),arcTest.getCapacite()-arcTest.getFlot()));
 					return path; //Si c'est le cas, on ajoute l'arc et on retourne le chemin
@@ -109,10 +109,10 @@ public class Main {
 					flotMax += minf;
 					for(Arcs arcPath:path.getPath()){
 						arcPath.setFlot(minf);
-						if(arcPath.getSommetDestination().getPixelNumberl() != -1) { // On complete les arcs retours
-							Arcs arcDestination = graph.getArcs()[arcPath.getSommetDestination().getPixelNumberl()];
+						if(arcPath.getSommetDestination().getPixelNumber() != -1) { // On complete les arcs retours
+							Arcs arcDestination = graph.getArcs()[arcPath.getSommetDestination().getPixelNumber()];
 							while(arcDestination != null) {
-								if (arcDestination.getSommetDestination().getPixelNumberl() == arcPath.getSommetOrigin().getPixelNumberl()) {
+								if (arcDestination.getSommetDestination().getPixelNumber() == arcPath.getSommetOrigin().getPixelNumber()) {
 									arcDestination.setFlot(-minf);
 								}
 								arcDestination = arcDestination.getNextArc();
@@ -138,7 +138,7 @@ public class Main {
 		while(arc != null) {
 			if (arc.getCapacite() - arc.getFlot() > 0 && !arc.getSommetDestination().getSetA()) { // si on peut acceder au sommet suivant et que celui-ci n'a pas encore été visité, alors on le visite
 				arc.getSommetDestination().setSetA(true);
-				profondeur(graph,arc.getSommetDestination().getPixelNumberl());
+				profondeur(graph,arc.getSommetDestination().getPixelNumber());
 			}
 			arc = arc.getNextArc();
 		}
